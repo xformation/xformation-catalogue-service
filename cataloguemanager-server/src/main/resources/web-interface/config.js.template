@@ -1,0 +1,5 @@
+window.appConfig = {
+  xfcatlgServerUrl: '${serverUri}',
+  xfcatlgAppPathPrefix: '${appPathPrefix}',
+  rootTimeZone: '${rootTimeZone}',
+};

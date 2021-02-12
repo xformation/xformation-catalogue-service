@@ -1,0 +1,25 @@
+{
+  "name": "${pluginClassName}",
+  "version": "${version}",
+  "description": "",
+  
+  "scripts": {
+    "build": "webpack",
+    "lint": "eslint src",
+    "lint:path": "eslint",
+    "test": "jest"
+  },
+  "keywords": [
+    "cataloguemanager"
+  ],
+  "author": "${ownerName} <${ownerEmail}>",
+  "license": "MIT",
+  "eslintConfig": {
+    "extends": "cataloguemanager"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "cataloguemanager-web-plugin": "file:${serverCheckoutPath}/cataloguemanager-web-interface/packages/cataloguemanager-web-plugin"
+  }
+}

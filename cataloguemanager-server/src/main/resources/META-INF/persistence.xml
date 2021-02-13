@@ -5,7 +5,8 @@
              
              <persistence-unit name="postGsPu" transaction-type="RESOURCE_LOCAL">
              	<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-             	<!-- <class>com.synectiks.process.server.xformation.domain.Alert</class> -->
+             	<class>com.synectiks.process.server.xformation.domain.Collector</class>
+             	<class>com.synectiks.process.server.xformation.domain.Dashboard</class>
              	<properties>
              		<!-- 
              		<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />

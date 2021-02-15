@@ -2,21 +2,28 @@ package com.synectiks.process.server.xformation.rest;
 
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.synectiks.process.common.security.UserContext;
 import com.synectiks.process.server.shared.bindings.GuiceInjectorHolder;
 import com.synectiks.process.server.xformation.domain.Catalog;
 import com.synectiks.process.server.xformation.service.CollectorService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 //@RequiresAuthentication
 @Api(value = "Xformation/Collector", description = "Manage all xformation catalogues/collectors")
@@ -37,74 +44,47 @@ public class CollectorController {
         return list;
     }
 
-//	private Catalog createCatalog(Collector collector) {
-//		Catalog catalog = new Catalog();
-//		catalog.setId(collector.getId());
-//		catalog.setCatalogName(collector.getName());
-//		catalog.setType(collector.getType());
-//		catalog.setCatalogDescription(collector.getDescription());
-//		
-//		Dashboard dashboard = new Dashboard();
-//		dashboard.setCollector(collector);
-//		List<Dashboard> dashboardList = dashboardRepository.findAll(Example.of(dashboard));
-//		List<CatalogDetail> catalogDetailList = new ArrayList<>();
-//		for(Dashboard db: dashboardList) {
-//			CatalogDetail catalogDetail = new CatalogDetail();
-//			catalogDetail.setTitle(db.getName());
-//			catalogDetail.setDescription(db.getDescription());
-//			catalogDetail.setDashboardJson(new String(db.getDashboard()));
-//			catalogDetailList.add(catalogDetail);
-//		}
-//		catalog.setCatalogDetail(catalogDetailList);
-//		return catalog;
-//	}
+	@GET
+    @Path("/{id}")
+    @ApiOperation("Get a catalogue for a given catalogue id")
+    public Catalog getCatalogue(@ApiParam(name = "catalogueId") @PathParam("catalogueId") @NotBlank Long id) {
+    	LOG.info("Start controller getCatalogue. Catalogue id: "+id);
+    	CollectorService cs = GuiceInjectorHolder.getInjector().getInstance(CollectorService.class);
+    	Catalog catalog = cs.getCatalog(id);
+    	LOG.info("End controller getCatalogue. Catalogue id: "+id);
+    	return catalog;
+    }
+	
+	@POST
+    @ApiOperation("Create new catalogue")
+    public List<Catalog> createCollector(@ApiParam(name = "name") @PathParam("name") @NotBlank String name, 
+    		@ApiParam(name = "type") @PathParam("type") @NotBlank String type,
+    		@ApiParam(name = "description") @PathParam("description") String description,
+    		@Context UserContext userContext) {
+		
+		LOG.info("Start controller createCollector");
+		LOG.debug(String.format("Collector name : %s, type : %s", name, type));
+    	CollectorService cs = GuiceInjectorHolder.getInjector().getInstance(CollectorService.class);
+    	cs.createCatalog(name, type, description, userContext);
+    	List<Catalog> list = cs.getAllCollectors();
+    	LOG.info("End controller createCollector");
+    	return list;
+    }
 
-//    @PostMapping("/addCollector")
-//    public ResponseEntity<List<Catalog>> addCollector(@RequestParam String name, 
-//    		@RequestParam String type,
-//    		@RequestParam(required = false) String description,
-//    		@RequestParam (name = "userName", required = false) String userName) throws URISyntaxException {
-//        logger.info(String.format("Request to create a Collector. Collector name : %s, type : %s", name, type));
-//    	Collector collector = new Collector();
-//        collector.setName(name);
-//        collector.setType(type);
-//        collector.setDescription(description);
-//        
-//        if(!StringUtils.isBlank(userName)) {
-//        	collector.setCreatedBy(userName);
-//        	collector.setUpdatedBy(userName);
-//    	}else {
-//    		collector.setCreatedBy(Constants.SYSTEM_ACCOUNT);
-//    		collector.setUpdatedBy(Constants.SYSTEM_ACCOUNT);
-//    	}
-//    	Instant now = Instant.now();
-//    	collector.setCreatedOn(now);
-//    	collector.setUpdatedOn(now);
-//        
-//    	
-//        collector = collectorRepository.save(collector);
-//        List<Catalog> list = getAllCollectors();
-//        return ResponseEntity.created(new URI("/api/addCollector/" + collector.getId()))
-//            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, collector.getId().toString()))
-//            .body(list);
-//        
-//    }
+	@PUT
+    @ApiOperation("Update a catalogue")
+    public List<Catalog> updateCollector(@ApiParam(name = "catalogueId") @PathParam("catalogueId") @NotBlank Long catalogueId, 
+    		@ApiParam(name = "dataSource") @PathParam("dataSource") @NotBlank String dataSource,
+    		@Context UserContext userContext) {
+		LOG.info("Start controller updateCollector");
+		LOG.debug(String.format("Collector id : %d, data source : %s", catalogueId, dataSource));
+    	CollectorService cs = GuiceInjectorHolder.getInjector().getInstance(CollectorService.class);
+    	cs.updateCatalog(catalogueId, dataSource, userContext);
+    	List<Catalog> list = cs.getAllCollectors();
+    	LOG.info("End controller updateCollector");
+    	return list;
+    }
 
-
-//    @PutMapping("/updateCollector")
-//    public ResponseEntity<Collector> updateCollector(@RequestParam Long id, @RequestParam String dataSource) throws URISyntaxException {
-//        logger.info(String.format("Request to update a Collector. Collector id : %d, datasource : %s", id, dataSource));
-//        
-//        Collector collector = new Collector();
-//        collector.setId(id);
-//        collector.setDatasource(dataSource);
-//        
-//        collector = collectorRepository.save(collector);
-//        
-//        return ResponseEntity.created(new URI("/api/updateCollector/" + collector.getId()))
-//            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, collector.getId().toString()))
-//            .body(collector);
-//    }
     
 //    @DeleteMapping("/deleteCollector/{id}")
 //    public ResponseEntity<Void> deleteCollector(@PathVariable Long id) {
@@ -129,15 +109,7 @@ public class CollectorController {
 
     
 
-//    @GetMapping("/getCollector/{id}")
-//    public ResponseEntity<Catalog> getCollector(@PathVariable Long id) throws URISyntaxException {
-//        logger.debug("Request to get a Collector. Collector id : ", id);
-//        Collector collector = collectorRepository.findById(id).get();
-//        Catalog catalog = createCatalog(collector);
-//        return ResponseEntity.created(new URI("/api/listCollector/" + collector.getId()))
-//                .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, collector.getId().toString()))
-//                .body(catalog);
-//    }
+
 
     
 //    @GetMapping("/searchCollector")

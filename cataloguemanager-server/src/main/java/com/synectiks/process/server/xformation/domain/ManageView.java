@@ -1,24 +1,18 @@
 package com.synectiks.process.server.xformation.domain;
 
+
+import javax.persistence.*;
+import javax.validation.constraints.*;
+
 import java.io.Serializable;
 import java.time.Instant;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.Size;
-
+/**
+ * A ManageView.
+ */
 @Entity
-@Table(name = "dashboard")
-public class Dashboard implements Serializable {
+@Table(name = "manage_view")
+public class ManageView implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,15 +25,21 @@ public class Dashboard implements Serializable {
     private String name;
 
     @Lob
-    @Column(name = "dashboard")
-    private byte[] dashboard;
+    @Column(name = "view_data")
+    private byte[] viewData;
 
-    @Column(name = "dashboard_content_type")
-    private String dashboardContentType;
+    @Column(name = "view_data_content_type")
+    private String viewDataContentType;
 
     @Size(max = 5000)
     @Column(name = "description", length = 5000)
     private String description;
+
+    @Column(name = "type")
+    private String type;
+
+    @Column(name = "status")
+    private String status;
 
     @Column(name = "created_by")
     private String createdBy;
@@ -53,10 +53,7 @@ public class Dashboard implements Serializable {
     @Column(name = "updated_on")
     private Instant updatedOn;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "collector_id")
-    private Collector collector;
-
+    // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
     }
@@ -69,7 +66,7 @@ public class Dashboard implements Serializable {
         return name;
     }
 
-    public Dashboard name(String name) {
+    public ManageView name(String name) {
         this.name = name;
         return this;
     }
@@ -78,37 +75,37 @@ public class Dashboard implements Serializable {
         this.name = name;
     }
 
-    public byte[] getDashboard() {
-        return dashboard;
+    public byte[] getViewData() {
+        return viewData;
     }
 
-    public Dashboard dashboard(byte[] dashboard) {
-        this.dashboard = dashboard;
+    public ManageView viewData(byte[] viewData) {
+        this.viewData = viewData;
         return this;
     }
 
-    public void setDashboard(byte[] dashboard) {
-        this.dashboard = dashboard;
+    public void setViewData(byte[] viewData) {
+        this.viewData = viewData;
     }
 
-    public String getDashboardContentType() {
-        return dashboardContentType;
+    public String getViewDataContentType() {
+        return viewDataContentType;
     }
 
-    public Dashboard dashboardContentType(String dashboardContentType) {
-        this.dashboardContentType = dashboardContentType;
+    public ManageView viewDataContentType(String viewDataContentType) {
+        this.viewDataContentType = viewDataContentType;
         return this;
     }
 
-    public void setDashboardContentType(String dashboardContentType) {
-        this.dashboardContentType = dashboardContentType;
+    public void setViewDataContentType(String viewDataContentType) {
+        this.viewDataContentType = viewDataContentType;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public Dashboard description(String description) {
+    public ManageView description(String description) {
         this.description = description;
         return this;
     }
@@ -117,11 +114,37 @@ public class Dashboard implements Serializable {
         this.description = description;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public ManageView type(String type) {
+        this.type = type;
+        return this;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public ManageView status(String status) {
+        this.status = status;
+        return this;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public String getCreatedBy() {
         return createdBy;
     }
 
-    public Dashboard createdBy(String createdBy) {
+    public ManageView createdBy(String createdBy) {
         this.createdBy = createdBy;
         return this;
     }
@@ -134,7 +157,7 @@ public class Dashboard implements Serializable {
         return createdOn;
     }
 
-    public Dashboard createdOn(Instant createdOn) {
+    public ManageView createdOn(Instant createdOn) {
         this.createdOn = createdOn;
         return this;
     }
@@ -147,7 +170,7 @@ public class Dashboard implements Serializable {
         return updatedBy;
     }
 
-    public Dashboard updatedBy(String updatedBy) {
+    public ManageView updatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
         return this;
     }
@@ -160,7 +183,7 @@ public class Dashboard implements Serializable {
         return updatedOn;
     }
 
-    public Dashboard updatedOn(Instant updatedOn) {
+    public ManageView updatedOn(Instant updatedOn) {
         this.updatedOn = updatedOn;
         return this;
     }
@@ -168,29 +191,17 @@ public class Dashboard implements Serializable {
     public void setUpdatedOn(Instant updatedOn) {
         this.updatedOn = updatedOn;
     }
-
-    public Collector getCollector() {
-        return collector;
-    }
-
-    public Dashboard collector(Collector collector) {
-        this.collector = collector;
-        return this;
-    }
-
-    public void setCollector(Collector collector) {
-        this.collector = collector;
-    }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Dashboard)) {
+        if (!(o instanceof ManageView)) {
             return false;
         }
-        return id != null && id.equals(((Dashboard) o).id);
+        return id != null && id.equals(((ManageView) o).id);
     }
 
     @Override
@@ -198,14 +209,17 @@ public class Dashboard implements Serializable {
         return 31;
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
-        return "Dashboard{" +
+        return "ManageView{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-//            ", dashboard='" + getDashboard() + "'" +
-            ", dashboardContentType='" + getDashboardContentType() + "'" +
+            ", viewData='" + getViewData() + "'" +
+            ", viewDataContentType='" + getViewDataContentType() + "'" +
             ", description='" + getDescription() + "'" +
+            ", type='" + getType() + "'" +
+            ", status='" + getStatus() + "'" +
             ", createdBy='" + getCreatedBy() + "'" +
             ", createdOn='" + getCreatedOn() + "'" +
             ", updatedBy='" + getUpdatedBy() + "'" +

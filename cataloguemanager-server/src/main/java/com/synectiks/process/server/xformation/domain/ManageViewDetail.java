@@ -3,58 +3,26 @@ package com.synectiks.process.server.xformation.domain;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.Size;
 
-@Entity
-@Table(name = "collector")
-public class Collector implements Serializable {
+public class ManageViewDetail implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
-
-    @Column(name = "name")
     private String name;
-
-    @Column(name = "type")
-    private String type;
-
-    @Column(name = "datasource")
-    private String datasource;
-
-    @Size(max = 5000)
-    @Column(name = "description", length = 5000)
+    private byte[] viewData;
+    private String viewDataContentType;
     private String description;
-
-    @Column(name = "created_by")
+    private String type;
+    private String status;
     private String createdBy;
-
-    @Column(name = "created_on")
     private Instant createdOn;
-
-    @Column(name = "updated_by")
     private String updatedBy;
-
-    @Column(name = "updated_on")
     private Instant updatedOn;
-
-    @OneToMany(mappedBy = "collector", fetch = FetchType.EAGER)
-    private List<Dashboard> dashboard;
+    private String viewJson;
     
+    // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
     }
@@ -67,7 +35,7 @@ public class Collector implements Serializable {
         return name;
     }
 
-    public Collector name(String name) {
+    public ManageViewDetail name(String name) {
         this.name = name;
         return this;
     }
@@ -76,37 +44,37 @@ public class Collector implements Serializable {
         this.name = name;
     }
 
-    public String getType() {
-        return type;
+    public byte[] getViewData() {
+        return viewData;
     }
 
-    public Collector type(String type) {
-        this.type = type;
+    public ManageViewDetail viewData(byte[] viewData) {
+        this.viewData = viewData;
         return this;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setViewData(byte[] viewData) {
+        this.viewData = viewData;
     }
 
-    public String getDatasource() {
-        return datasource;
+    public String getViewDataContentType() {
+        return viewDataContentType;
     }
 
-    public Collector datasource(String datasource) {
-        this.datasource = datasource;
+    public ManageViewDetail viewDataContentType(String viewDataContentType) {
+        this.viewDataContentType = viewDataContentType;
         return this;
     }
 
-    public void setDatasource(String datasource) {
-        this.datasource = datasource;
+    public void setViewDataContentType(String viewDataContentType) {
+        this.viewDataContentType = viewDataContentType;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public Collector description(String description) {
+    public ManageViewDetail description(String description) {
         this.description = description;
         return this;
     }
@@ -115,11 +83,37 @@ public class Collector implements Serializable {
         this.description = description;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public ManageViewDetail type(String type) {
+        this.type = type;
+        return this;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public ManageViewDetail status(String status) {
+        this.status = status;
+        return this;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public String getCreatedBy() {
         return createdBy;
     }
 
-    public Collector createdBy(String createdBy) {
+    public ManageViewDetail createdBy(String createdBy) {
         this.createdBy = createdBy;
         return this;
     }
@@ -132,7 +126,7 @@ public class Collector implements Serializable {
         return createdOn;
     }
 
-    public Collector createdOn(Instant createdOn) {
+    public ManageViewDetail createdOn(Instant createdOn) {
         this.createdOn = createdOn;
         return this;
     }
@@ -145,7 +139,7 @@ public class Collector implements Serializable {
         return updatedBy;
     }
 
-    public Collector updatedBy(String updatedBy) {
+    public ManageViewDetail updatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
         return this;
     }
@@ -158,7 +152,7 @@ public class Collector implements Serializable {
         return updatedOn;
     }
 
-    public Collector updatedOn(Instant updatedOn) {
+    public ManageViewDetail updatedOn(Instant updatedOn) {
         this.updatedOn = updatedOn;
         return this;
     }
@@ -166,31 +160,35 @@ public class Collector implements Serializable {
     public void setUpdatedOn(Instant updatedOn) {
         this.updatedOn = updatedOn;
     }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Collector)) {
+        if (!(o instanceof ManageViewDetail)) {
             return false;
         }
-        return id != null && id.equals(((Collector) o).id);
+        return id != null && id.equals(((ManageViewDetail) o).id);
     }
 
     @Override
     public int hashCode() {
-        return 31;
+        return 41;
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
-        return "Collector{" +
+        return "ManageView{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", type='" + getType() + "'" +
-            ", datasource='" + getDatasource() + "'" +
+            ", viewData='" + getViewData() + "'" +
+            ", viewDataContentType='" + getViewDataContentType() + "'" +
             ", description='" + getDescription() + "'" +
+            ", type='" + getType() + "'" +
+            ", status='" + getStatus() + "'" +
             ", createdBy='" + getCreatedBy() + "'" +
             ", createdOn='" + getCreatedOn() + "'" +
             ", updatedBy='" + getUpdatedBy() + "'" +
@@ -198,19 +196,11 @@ public class Collector implements Serializable {
             "}";
     }
 
-	public List<Dashboard> getDashboard() {
-		return dashboard;
+	public String getViewJson() {
+		return viewJson;
 	}
 
-	public void setDashboard(List<Dashboard> dashboard) {
-		this.dashboard = dashboard;
+	public void setViewJson(String viewJson) {
+		this.viewJson = viewJson;
 	}
-
-//	public Set<Dashboard> getDashboards() {
-//		return dashboards;
-//	}
-//
-//	public void setDashboards(Set<Dashboard> dashboards) {
-//		this.dashboards = dashboards;
-//	}
 }

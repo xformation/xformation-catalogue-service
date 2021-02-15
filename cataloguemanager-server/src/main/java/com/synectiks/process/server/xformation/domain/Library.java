@@ -1,11 +1,18 @@
 package com.synectiks.process.server.xformation.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
 import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 /**
  * A Library.
@@ -32,14 +39,13 @@ public class Library implements Serializable {
     private String dataSource;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = "libraries", allowSetters = true)
+    @JoinColumn(name = "collector_id")
     private Collector collector;
 
-    @ManyToOne
-    @JsonIgnoreProperties(value = "libraries", allowSetters = true)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "folder_id")
     private Folder folder;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
     }
@@ -112,7 +118,6 @@ public class Library implements Serializable {
     public void setFolder(Folder folder) {
         this.folder = folder;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {

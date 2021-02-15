@@ -1,10 +1,19 @@
 package com.synectiks.process.server.xformation.domain;
 
 
-import javax.persistence.*;
-
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 /**
  * A Folder.
@@ -47,7 +56,13 @@ public class Folder implements Serializable {
     @Column(name = "updated_on")
     private Instant updatedOn;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here
+    @OneToMany(mappedBy = "collector", fetch = FetchType.EAGER)
+    private List<Library> collector;
+    
+    @OneToMany(mappedBy = "folder", fetch = FetchType.EAGER)
+    private List<Library> folder;
+    
+    
     public Long getId() {
         return id;
     }

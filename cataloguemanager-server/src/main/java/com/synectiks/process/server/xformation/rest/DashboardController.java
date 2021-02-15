@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.synectiks.process.server.shared.bindings.GuiceInjectorHolder;
+import com.synectiks.process.server.xformation.domain.CatalogDetail;
 import com.synectiks.process.server.xformation.domain.Dashboard;
 import com.synectiks.process.server.xformation.service.DashboardService;
 
@@ -84,52 +85,18 @@ public class DashboardController {
     	return Response.ok().entity(list).build();
     }
 
-//    @GetMapping("/listDashboard")
-//    public List<CatalogDetail> listAllDashboard(@RequestParam(required = false)  Long id, @RequestParam(required = false)  String isFolder) {
-//        if(!StringUtils.isBlank(isFolder) && !Objects.isNull(id)) {
-//        	logger.info("Request to get dashboards for id : "+id);
-//        	if(Boolean.valueOf(isFolder)) {
-//        		logger.info("Getting all dashboards of the given collector id : "+id);
-//        		Collector col = collectorRepository.findById(id).get();
-//        		Dashboard dashboard = new Dashboard();
-//        		dashboard.setCollector(col);
-//        		List<Dashboard> dashList = dashboardRepository.findAll(Example.of(dashboard));
-//        		List<CatalogDetail> catList = new ArrayList<>();
-//        		for(Dashboard d: dashList) {
-//        			CatalogDetail cd = new CatalogDetail();
-//        			cd.setId(d.getId());
-//        			cd.setTitle(d.getName());
-//        			cd.setDescription(d.getDescription());
-//        			cd.setDashboardJson(new String(d.getDashboard()));
-//        			catList.add(cd);
-//        		}
-//        		return catList;
-//        	}else {
-//        		logger.info("Getting a dashboard of the given id : "+id);
-//        		Dashboard d = dashboardRepository.findById(id).get();
-//        		CatalogDetail cd = new CatalogDetail();
-//    			cd.setId(d.getId());
-//    			cd.setTitle(d.getName());
-//    			cd.setDescription(d.getDescription());
-//    			cd.setDashboardJson(new String(d.getDashboard()));
-//    			List<CatalogDetail> list = new ArrayList<>();
-//        		list.add(cd);
-//        		return list;
-//        	}
-//        }
-//    	logger.info("Request to get all dashboards");
-//        List<Dashboard> dashList =  dashboardRepository.findAll(Sort.by(Direction.DESC, "id"));
-//        List<CatalogDetail> catList = new ArrayList<>();
-//		for(Dashboard d: dashList) {
-//			CatalogDetail cd = new CatalogDetail();
-//			cd.setId(d.getId());
-//			cd.setTitle(d.getName());
-//			cd.setDescription(d.getDescription());
-//			cd.setDashboardJson(new String(d.getDashboard()));
-//			catList.add(cd);
-//		}
-//		return catList;
-//    }
+    @GET
+    @Path("/listDashboard")
+    @ApiOperation("Get all the dashboards")
+    public List<CatalogDetail> listAllDashboard(
+    		@ApiParam(name = "collectorId") @PathParam("collectorId") Long collectorId,
+    		@ApiParam(name = "isFolder") @PathParam("isFolder") String isFolder) {
+    	LOG.info("Start controller listAllDashboard");
+    	DashboardService ds = GuiceInjectorHolder.getInjector().getInstance(DashboardService.class);
+    	List<CatalogDetail> catList = ds.listAllDashboard(collectorId, isFolder);
+    	LOG.info("End controller listAllDashboard");
+    	return catList;
+    }
 
 
     

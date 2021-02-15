@@ -1,17 +1,22 @@
 package com.synectiks.process.server.xformation.service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.persist.Transactional;
 import com.synectiks.process.server.shared.bindings.GuiceInjectorHolder;
+import com.synectiks.process.server.xformation.domain.Catalog;
+import com.synectiks.process.server.xformation.domain.CatalogDetail;
 import com.synectiks.process.server.xformation.domain.Collector;
 import com.synectiks.process.server.xformation.domain.Dashboard;
 
@@ -89,49 +94,76 @@ public class DashboardServiceImpl implements DashboardService {
 		return dashboardList;
     }
 	
-//	public List<CatalogDetail> listAllDashboard(Long id, String isFolder) {
-//      if(!StringUtils.isBlank(isFolder) && !Objects.isNull(id)) {
-//      	logger.info("Request to get dashboards for id : "+id);
-//      	if(Boolean.valueOf(isFolder)) {
-//      		logger.info("Getting all dashboards of the given collector id : "+id);
-//      		Collector col = collectorRepository.findById(id).get();
-//      		Dashboard dashboard = new Dashboard();
-//      		dashboard.setCollector(col);
-//      		List<Dashboard> dashList = dashboardRepository.findAll(Example.of(dashboard));
-//      		List<CatalogDetail> catList = new ArrayList<>();
-//      		for(Dashboard d: dashList) {
-//      			CatalogDetail cd = new CatalogDetail();
-//      			cd.setId(d.getId());
-//      			cd.setTitle(d.getName());
-//      			cd.setDescription(d.getDescription());
-//      			cd.setDashboardJson(new String(d.getDashboard()));
-//      			catList.add(cd);
-//      		}
-//      		return catList;
-//      	}else {
-//      		logger.info("Getting a dashboard of the given id : "+id);
-//      		Dashboard d = dashboardRepository.findById(id).get();
-//      		CatalogDetail cd = new CatalogDetail();
-//  			cd.setId(d.getId());
-//  			cd.setTitle(d.getName());
-//  			cd.setDescription(d.getDescription());
-//  			cd.setDashboardJson(new String(d.getDashboard()));
-//  			List<CatalogDetail> list = new ArrayList<>();
-//      		list.add(cd);
-//      		return list;
-//      	}
-//      }
-//  	logger.info("Request to get all dashboards");
-//      List<Dashboard> dashList =  dashboardRepository.findAll(Sort.by(Direction.DESC, "id"));
-//      List<CatalogDetail> catList = new ArrayList<>();
-//		for(Dashboard d: dashList) {
-//			CatalogDetail cd = new CatalogDetail();
-//			cd.setId(d.getId());
-//			cd.setTitle(d.getName());
-//			cd.setDescription(d.getDescription());
-//			cd.setDashboardJson(new String(d.getDashboard()));
-//			catList.add(cd);
-//		}
-//		return catList;
-//  }
+	@Override
+	public List<Dashboard> getAllDashboards() {
+		LOG.info("Start service getAllDashboards");
+		String query = "select d from Dashboard d order by d.id DESC";
+		List<Dashboard> dashboardList = entityManager.createQuery(query, Dashboard.class).getResultList();
+		LOG.info("End service getAllDashboards");
+		return dashboardList;
+	}
+	
+	@Override
+	public List<CatalogDetail> listAllDashboard(Long id, String isFolder) {
+      if(!StringUtils.isBlank(isFolder) && !Objects.isNull(id)) {
+      	if(Boolean.valueOf(isFolder)) {
+      		LOG.info("Getting all dashboards for a given collector. Collector id : "+id);
+      		List<CatalogDetail> catList = getCatalog(id);
+      		return catList;
+      	}else {
+      		LOG.info("Getting a dashboard for the given dashboard id : "+id);
+      		Dashboard d = getDashboard(id); 
+      		CatalogDetail cd = new CatalogDetail();
+  			cd.setId(d.getId());
+  			cd.setTitle(d.getName());
+  			cd.setDescription(d.getDescription());
+  			cd.setDashboardJson(new String(d.getDashboard()));
+  			List<CatalogDetail> list = new ArrayList<>();
+      		list.add(cd);
+      		return list;
+      	}
+      }
+      LOG.info("Request to get all dashboards");
+      List<Dashboard> dashList = getAllDashboards();
+      List<CatalogDetail> catList = new ArrayList<>();
+      for(Dashboard d: dashList) {
+			CatalogDetail cd = new CatalogDetail();
+			cd.setId(d.getId());
+			cd.setTitle(d.getName());
+			cd.setDescription(d.getDescription());
+			cd.setDashboardJson(new String(d.getDashboard()));
+			catList.add(cd);
+      }
+      return catList;
+	}
+	
+	private List<CatalogDetail> getCatalog(Long collectorId) {
+		LOG.info("Start service getCatalog");
+		String query = "select c from Collector c where c.id =: collectorId";
+		Collector collector = entityManager.createQuery(query, Collector.class).setParameter("collectorId", collectorId).getSingleResult();
+		
+		Catalog catalog = new Catalog();
+		catalog.setId(collector.getId());
+		catalog.setCatalogName(collector.getName());
+		catalog.setType(collector.getType());
+		catalog.setCatalogDescription(collector.getDescription());
+		
+		String queryDs = "SELECT d FROM Collector c JOIN c.dashboard d WHERE c.id = :collectorId";
+		
+		List<Dashboard> dashboardList = entityManager.createQuery(queryDs, Dashboard.class).setParameter("collectorId", collector.getId()).getResultList();
+		List<CatalogDetail> catalogDetailList = new ArrayList<>();
+		for(Dashboard db: dashboardList) {
+			LOG.debug("Dashboard: " + db.toString());
+			CatalogDetail catalogDetail = new CatalogDetail();
+			catalogDetail.setId(db.getId());
+			catalogDetail.setTitle(db.getName());
+			catalogDetail.setDescription(db.getDescription());
+			catalogDetail.setDashboardJson(new String(db.getDashboard()));
+			catalogDetailList.add(catalogDetail);
+		}
+		catalog.setCatalogDetail(catalogDetailList);
+		LOG.info("End service getCatalog");
+		return catalogDetailList;
+	}
+	
 }

@@ -184,7 +184,7 @@ public class ManageViewDetail implements Serializable {
         return "ManageView{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", viewData='" + getViewData() + "'" +
+//            ", viewData='" + getViewData() + "'" +
             ", viewDataContentType='" + getViewDataContentType() + "'" +
             ", description='" + getDescription() + "'" +
             ", type='" + getType() + "'" +

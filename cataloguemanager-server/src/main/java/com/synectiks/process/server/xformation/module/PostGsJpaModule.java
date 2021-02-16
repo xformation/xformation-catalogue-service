@@ -14,6 +14,10 @@ import com.synectiks.process.server.xformation.service.DashboardService;
 import com.synectiks.process.server.xformation.service.DashboardServiceImpl;
 import com.synectiks.process.server.xformation.service.FolderService;
 import com.synectiks.process.server.xformation.service.FolderServiceImpl;
+import com.synectiks.process.server.xformation.service.LibraryService;
+import com.synectiks.process.server.xformation.service.LibraryServiceImpl;
+import com.synectiks.process.server.xformation.service.ManageViewService;
+import com.synectiks.process.server.xformation.service.ManageViewServiceImpl;
 
 public class PostGsJpaModule extends AbstractModule {
 	private static final Logger LOG = LoggerFactory.getLogger(PostGsJpaModule.class);
@@ -25,6 +29,8 @@ public class PostGsJpaModule extends AbstractModule {
         bind(CollectorService.class).to(CollectorServiceImpl.class);
         bind(DashboardService.class).to(DashboardServiceImpl.class);
         bind(FolderService.class).to(FolderServiceImpl.class);
+        bind(LibraryService.class).to(LibraryServiceImpl.class);
+        bind(ManageViewService.class).to(ManageViewServiceImpl.class);
     }
 
     @Singleton

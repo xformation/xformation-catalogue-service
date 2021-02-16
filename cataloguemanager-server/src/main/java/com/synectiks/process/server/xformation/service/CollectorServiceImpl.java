@@ -72,6 +72,7 @@ public class CollectorServiceImpl implements CollectorService {
 		for(Dashboard db: dashboardList) {
 			LOG.debug("Dashboard: " + db.toString());
 			CatalogDetail catalogDetail = new CatalogDetail();
+			catalogDetail.setId(db.getId());
 			catalogDetail.setTitle(db.getName());
 			catalogDetail.setDescription(db.getDescription());
 			catalogDetail.setDashboardJson(new String(db.getDashboard()));

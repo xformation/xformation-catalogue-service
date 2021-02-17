@@ -8,6 +8,6 @@ import com.synectiks.process.server.xformation.domain.Catalog;
 public interface CollectorService {
 	public List<Catalog> getAllCollectors();
 	public Catalog getCatalog(Long catalogId);
-	public Catalog createCatalog(String name, String type, String description, UserContext userContext);
-	public Catalog updateCatalog(Long id, String dataSource, UserContext userContext);
+	public Catalog createCatalog(String name, String type, String description);
+	public Catalog updateCatalog(Long id, String dataSource);
 }

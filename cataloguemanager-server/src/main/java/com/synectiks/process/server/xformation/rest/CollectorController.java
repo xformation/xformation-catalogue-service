@@ -2,6 +2,7 @@ package com.synectiks.process.server.xformation.rest;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.validation.constraints.NotBlank;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -17,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.synectiks.process.common.security.UserContext;
-import com.synectiks.process.server.shared.bindings.GuiceInjectorHolder;
+import com.synectiks.process.server.shared.rest.resources.RestResource;
 import com.synectiks.process.server.xformation.domain.Catalog;
 import com.synectiks.process.server.xformation.service.CollectorService;
 
@@ -30,16 +31,21 @@ import io.swagger.annotations.ApiParam;
 @Path("/xformation/catalogue")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class CollectorController {
+public class CollectorController extends RestResource  {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CollectorController.class);
-
+	private final CollectorService collectorService;
+	
+	@Inject
+	public CollectorController(CollectorService collectorService) {
+		this.collectorService = collectorService;
+	}
 	@GET
     @ApiOperation("List of all available catalogues/collectors")
     public List<Catalog> getAllCollectors() {
 		LOG.info("Start controller getAllCollectors");
-		CollectorService cs = GuiceInjectorHolder.getInjector().getInstance(CollectorService.class);
-    	List<Catalog> list = cs.getAllCollectors();
+//		CollectorService cs = GuiceInjectorHolder.getInjector().getInstance(CollectorService.class);
+    	List<Catalog> list = this.collectorService.getAllCollectors();
         LOG.info("End controller getAllCollectors");
         return list;
     }
@@ -47,40 +53,37 @@ public class CollectorController {
 	@GET
     @Path("/{id}")
     @ApiOperation("Get a catalogue for a given catalogue id")
-    public Catalog getCatalogue(@ApiParam(name = "catalogueId") @PathParam("catalogueId") @NotBlank Long id) {
+    public Catalog getCatalogue(@PathParam("id") Long id) {
     	LOG.info("Start controller getCatalogue. Catalogue id: "+id);
-    	CollectorService cs = GuiceInjectorHolder.getInjector().getInstance(CollectorService.class);
-    	Catalog catalog = cs.getCatalog(id);
+//    	CollectorService cs = GuiceInjectorHolder.getInjector().getInstance(CollectorService.class);
+    	Catalog catalog = this.collectorService.getCatalog(id);
     	LOG.info("End controller getCatalogue. Catalogue id: "+id);
     	return catalog;
     }
 	
 	@POST
     @ApiOperation("Create new catalogue")
-    public List<Catalog> createCollector(@ApiParam(name = "name") @PathParam("name") @NotBlank String name, 
-    		@ApiParam(name = "type") @PathParam("type") @NotBlank String type,
-    		@ApiParam(name = "description") @PathParam("description") String description,
-    		@Context UserContext userContext) {
-		
+    public List<Catalog> createCollector(@PathParam("name") String name, 
+    		@PathParam("type")String type,
+    		@PathParam("description") String description) {
 		LOG.info("Start controller createCollector");
 		LOG.debug(String.format("Collector name : %s, type : %s", name, type));
-    	CollectorService cs = GuiceInjectorHolder.getInjector().getInstance(CollectorService.class);
-    	cs.createCatalog(name, type, description, userContext);
-    	List<Catalog> list = cs.getAllCollectors();
+//    	CollectorService cs = GuiceInjectorHolder.getInjector().getInstance(CollectorService.class);
+		this.collectorService.createCatalog(name, type, description);
+    	List<Catalog> list = this.collectorService.getAllCollectors();
     	LOG.info("End controller createCollector");
     	return list;
     }
 
 	@PUT
     @ApiOperation("Update a catalogue")
-    public List<Catalog> updateCollector(@ApiParam(name = "catalogueId") @PathParam("catalogueId") @NotBlank Long catalogueId, 
-    		@ApiParam(name = "dataSource") @PathParam("dataSource") @NotBlank String dataSource,
-    		@Context UserContext userContext) {
+    public List<Catalog> updateCollector(@PathParam("catalogueId") Long catalogueId, 
+    		@PathParam("dataSource") String dataSource) {
 		LOG.info("Start controller updateCollector");
 		LOG.debug(String.format("Collector id : %d, data source : %s", catalogueId, dataSource));
-    	CollectorService cs = GuiceInjectorHolder.getInjector().getInstance(CollectorService.class);
-    	cs.updateCatalog(catalogueId, dataSource, userContext);
-    	List<Catalog> list = cs.getAllCollectors();
+//    	CollectorService cs = GuiceInjectorHolder.getInjector().getInstance(CollectorService.class);
+		this.collectorService.updateCatalog(catalogueId, dataSource);
+    	List<Catalog> list = this.collectorService.getAllCollectors();
     	LOG.info("End controller updateCollector");
     	return list;
     }
@@ -105,12 +108,6 @@ public class CollectorController {
 //    	}
 //    	return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
 //    }
-    
-
-    
-
-
-
     
 //    @GetMapping("/searchCollector")
 //    public List<Collector> searchCollector(@RequestParam Map<String, String> criteriaMap) {

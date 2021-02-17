@@ -7,9 +7,7 @@ import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
 
-/**
- * A ManageView.
- */
+
 @Entity
 @Table(name = "manage_view")
 public class ManageView implements Serializable {
@@ -53,7 +51,6 @@ public class ManageView implements Serializable {
     @Column(name = "updated_on")
     private Instant updatedOn;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
     }
@@ -191,7 +188,6 @@ public class ManageView implements Serializable {
     public void setUpdatedOn(Instant updatedOn) {
         this.updatedOn = updatedOn;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {

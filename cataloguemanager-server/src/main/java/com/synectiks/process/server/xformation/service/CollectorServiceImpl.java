@@ -1,14 +1,15 @@
 package com.synectiks.process.server.xformation.service;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,43 +115,58 @@ public class CollectorServiceImpl implements CollectorService {
 		return catalog;
 	}
 	
-	public Catalog createCatalog(String name, String type, String description) {
+	@Transactional
+	public synchronized void createCatalog(String name, String type, String description) {
 		LOG.info("Start service createCatalog");
+		Long maxId = getMax();
 		Collector collector = new Collector();
+		collector.setId(maxId+1);
         collector.setName(name);
         collector.setType(type);
-        collector.setDescription(description);
-        
+        if(!StringUtils.isBlank(description)) {
+        	collector.setDescription(description);
+        }
 //    	collector.setCreatedBy(userContext.getUser().getName());
 //    	collector.setUpdatedBy(userContext.getUser().getName());
     	
     	Instant now = Instant.now();
-    	collector.setCreatedOn(now);
-    	collector.setUpdatedOn(now);
-        
+    	Timestamp timestamp = Timestamp.from(now);
+    	collector.setCreatedOn(timestamp);
+    	collector.setUpdatedOn(timestamp);
+    	LOG.info("Catalog to be created in database: "+collector.toString());
     	entityManager.persist(collector);
-    	LOG.debug("Catalog created in database");
-    	entityManager.refresh(collector);
-    	Catalog catalog = getCatalog(collector);
+    	LOG.info("Catalog created in database");
+//    	entityManager.refresh(collector);
+//    	Catalog catalog = getCatalog(collector);
     	LOG.info("End service createCatalog");
-		return catalog;
 	}
 	
-	public Catalog updateCatalog(Long id, String dataSource) {
-		LOG.info("Start service updateCatalog");
-		String query = "select c from Collector c where c.id = :id";
-		Collector collector = entityManager.createQuery(query, Collector.class).setParameter("id", id).getSingleResult();
+	@Transactional
+	public void updateCatalog(Long catalogueId, String dataSource) {
+		LOG.info("Start service updateCatalog. Catalogue id: "+catalogueId);
+		
+		String query = "select c from Collector c where c.id = :catalogueId";
+		Collector collector = entityManager.createQuery(query, Collector.class).setParameter("catalogueId", catalogueId).getSingleResult();
+		
 		collector.setDatasource(dataSource);
 //    	collector.setUpdatedBy(userContext.getUser().getName());
     	Instant now = Instant.now();
-    	collector.setUpdatedOn(now);
+    	Timestamp timestamp = Timestamp.from(now);
+    	collector.setUpdatedOn(timestamp);
         
     	entityManager.merge(collector);
-    	LOG.debug("Catalog updated in database");
-    	entityManager.refresh(collector);
+    	LOG.info("Catalog updated in database");
+//    	entityManager.refresh(collector);
     	Catalog catalog = getCatalog(collector);
-    	LOG.info("End service updateCatalog");
-		return catalog;
+    	LOG.info("End service updateCatalog. Catalogue id: "+catalogueId);
 	}
 	
+	private synchronized Long getMax() {
+		LOG.info("Start service getMax");
+		String query = "select max(c.id) from Collector c ";
+		Long maxId = entityManager.createQuery(query, Long.class).getSingleResult();
+		LOG.info("Max Id: "+maxId);
+		LOG.info("End service getMax");
+		return maxId;
+	}
 }

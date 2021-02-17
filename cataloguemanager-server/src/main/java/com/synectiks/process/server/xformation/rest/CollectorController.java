@@ -5,12 +5,14 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.validation.constraints.NotBlank;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
@@ -63,12 +65,11 @@ public class CollectorController extends RestResource  {
 	
 	@POST
     @ApiOperation("Create new catalogue")
-    public List<Catalog> createCollector(@PathParam("name") String name, 
-    		@PathParam("type")String type,
-    		@PathParam("description") String description) {
+    public List<Catalog> createCollector(@QueryParam("name") String name, 
+    		@QueryParam("type") String type,
+    		@DefaultValue("") @QueryParam("description") String description) {
 		LOG.info("Start controller createCollector");
-		LOG.debug(String.format("Collector name : %s, type : %s", name, type));
-//    	CollectorService cs = GuiceInjectorHolder.getInjector().getInstance(CollectorService.class);
+		LOG.info("Collector name : "+name+", type : "+type+", description : "+description);
 		this.collectorService.createCatalog(name, type, description);
     	List<Catalog> list = this.collectorService.getAllCollectors();
     	LOG.info("End controller createCollector");
@@ -77,10 +78,9 @@ public class CollectorController extends RestResource  {
 
 	@PUT
     @ApiOperation("Update a catalogue")
-    public List<Catalog> updateCollector(@PathParam("catalogueId") Long catalogueId, 
-    		@PathParam("dataSource") String dataSource) {
+    public List<Catalog> updateCollector(@QueryParam("catalogueId") Long catalogueId, @QueryParam("dataSource") String dataSource) {
 		LOG.info("Start controller updateCollector");
-		LOG.debug(String.format("Collector id : %d, data source : %s", catalogueId, dataSource));
+		LOG.info("Collector id : "+catalogueId+" data source : "+dataSource);
 //    	CollectorService cs = GuiceInjectorHolder.getInjector().getInstance(CollectorService.class);
 		this.collectorService.updateCatalog(catalogueId, dataSource);
     	List<Catalog> list = this.collectorService.getAllCollectors();

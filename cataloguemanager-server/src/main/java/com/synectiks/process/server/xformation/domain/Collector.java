@@ -2,6 +2,7 @@ package com.synectiks.process.server.xformation.domain;
 
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 
@@ -23,8 +24,8 @@ public class Collector implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_gen")
+    @SequenceGenerator(sequenceName = "sequence_generator", allocationSize = 1, name = "seq_gen" )
     private Long id;
 
     @Column(name = "name")
@@ -44,13 +45,13 @@ public class Collector implements Serializable {
     private String createdBy;
 
     @Column(name = "created_on")
-    private Instant createdOn;
+    private Timestamp createdOn;
 
     @Column(name = "updated_by")
     private String updatedBy;
 
     @Column(name = "updated_on")
-    private Instant updatedOn;
+    private Timestamp updatedOn;
 
     @OneToMany(mappedBy = "collector", fetch = FetchType.EAGER)
     private List<Dashboard> dashboard;
@@ -128,16 +129,16 @@ public class Collector implements Serializable {
         this.createdBy = createdBy;
     }
 
-    public Instant getCreatedOn() {
+    public Timestamp getCreatedOn() {
         return createdOn;
     }
 
-    public Collector createdOn(Instant createdOn) {
+    public Collector createdOn(Timestamp createdOn) {
         this.createdOn = createdOn;
         return this;
     }
 
-    public void setCreatedOn(Instant createdOn) {
+    public void setCreatedOn(Timestamp createdOn) {
         this.createdOn = createdOn;
     }
 
@@ -154,16 +155,16 @@ public class Collector implements Serializable {
         this.updatedBy = updatedBy;
     }
 
-    public Instant getUpdatedOn() {
+    public Timestamp getUpdatedOn() {
         return updatedOn;
     }
 
-    public Collector updatedOn(Instant updatedOn) {
+    public Collector updatedOn(Timestamp updatedOn) {
         this.updatedOn = updatedOn;
         return this;
     }
 
-    public void setUpdatedOn(Instant updatedOn) {
+    public void setUpdatedOn(Timestamp updatedOn) {
         this.updatedOn = updatedOn;
     }
 

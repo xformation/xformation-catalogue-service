@@ -168,7 +168,7 @@ public class LibraryServiceImpl implements LibraryService{
     		collectorNode.setIsFolder(false);
     		collectorNode.setHasChild(false);
     		
-    		datetime = LocalDateTime.ofInstant(col.getUpdatedOn(), ZoneId.systemDefault());
+    		datetime = LocalDateTime.ofInstant(col.getUpdatedOn().toInstant(), ZoneId.systemDefault());
     		String formatedDate = DateTimeFormatter.ofPattern("dd/MM/yyyy").format(datetime);
     		collectorNode.setCreatedBy(col.getUpdatedBy());
     		collectorNode.setLastModified(formatedDate + " by "+ col.getUpdatedBy());

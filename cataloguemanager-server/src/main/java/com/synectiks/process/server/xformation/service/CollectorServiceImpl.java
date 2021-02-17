@@ -157,7 +157,7 @@ public class CollectorServiceImpl implements CollectorService {
     	entityManager.merge(collector);
     	LOG.info("Catalog updated in database");
 //    	entityManager.refresh(collector);
-    	Catalog catalog = getCatalog(collector);
+//    	Catalog catalog = getCatalog(collector);
     	LOG.info("End service updateCatalog. Catalogue id: "+catalogueId);
 	}
 	

@@ -78,7 +78,6 @@ public class DashboardController extends RestResource  {
     @ApiOperation("Delete a dashboard")
     public void deleteDashboard(@PathParam("id") Long id) {
     	LOG.info("Start controller deleteDashboard. Dashboard id: "+id);
-//    	DashboardService ds = GuiceInjectorHolder.getInjector().getInstance(DashboardService.class);
     	this.dashboardService.deleteDashboard(id);
     	LOG.info("End controller deleteDashboard. Dashboard id: "+id);
     }
@@ -88,11 +87,8 @@ public class DashboardController extends RestResource  {
     @ApiOperation("Get all the dashboards belongs to a collector")
     public Response listDashboardOfCollector(@PathParam("collectorId") Long collectorId) {
     	LOG.info("Start controller listDashboardOfCollector. Collector id: "+collectorId);
-//    	DashboardService ds = GuiceInjectorHolder.getInjector().getInstance(DashboardService.class);
     	List<Dashboard> list = this.dashboardService.listDashboardOfCollector(collectorId);
     	LOG.info("End controller listDashboardOfCollector. Collector id: "+collectorId);
-    	
-//    	return list;
     	return Response.ok().entity(list).build();
     }
 
@@ -102,7 +98,6 @@ public class DashboardController extends RestResource  {
     public List<CatalogDetail> listAllDashboard(@QueryParam("collectorId") Long collectorId,
     											@QueryParam("isFolder") String isFolder) {
     	LOG.info("Start controller listAllDashboard");
-//    	DashboardService ds = GuiceInjectorHolder.getInjector().getInstance(DashboardService.class);
     	List<CatalogDetail> catList = this.dashboardService.listAllDashboard(collectorId, isFolder);
     	LOG.info("End controller listAllDashboard");
     	return catList;

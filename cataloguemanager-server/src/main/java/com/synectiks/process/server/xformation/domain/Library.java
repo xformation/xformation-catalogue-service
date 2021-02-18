@@ -14,6 +14,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 /**
  * A Library.
  */
@@ -40,10 +42,12 @@ public class Library implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "collector_id")
+    @JsonBackReference
     private Collector collector;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "folder_id")
+    @JsonBackReference
     private Folder folder;
 
     public Long getId() {

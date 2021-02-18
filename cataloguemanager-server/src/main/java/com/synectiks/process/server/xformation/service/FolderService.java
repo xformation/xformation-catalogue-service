@@ -8,7 +8,7 @@ import com.synectiks.process.server.xformation.domain.Library;
 
 public interface FolderService {
 
-	public List<Folder> addFolder(String title, Long parentId, String userName);
+	public Folder addFolder(String title, Long parentId);
     public List<Folder> getAllFolders();
     public List<FolderTree> getFoldersTree();
     public List<Library> listCollectorOfFolder(String title);

@@ -102,7 +102,7 @@ plugin_dir = plugin
 # If the port is omitted, Cataloguemanager will use port 9000 by default.
 #
 # Default: 127.0.0.1:7043
-http_bind_address = 127.0.0.1:7043
+http_bind_address = 100.64.108.25:7043
 #http_bind_address = [2001:db8::1]:7043
 
 #### HTTP publish URI
@@ -120,7 +120,7 @@ http_bind_address = 127.0.0.1:7043
 #
 # Default: http://$http_bind_address/
 #http_publish_uri = http://192.168.1.1:9000/
-http_publish_uri = http://127.0.0.1:7043/
+http_publish_uri = http://100.64.108.25:7043/
 
 #### External Cataloguemanager URI
 #

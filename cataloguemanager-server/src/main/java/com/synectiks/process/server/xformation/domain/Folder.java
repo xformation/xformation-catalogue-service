@@ -2,6 +2,7 @@ package com.synectiks.process.server.xformation.domain;
 
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 
@@ -14,6 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 /**
  * A Folder.
@@ -48,18 +51,20 @@ public class Folder implements Serializable {
     private String createdBy;
 
     @Column(name = "created_on")
-    private Instant createdOn;
+    private Timestamp createdOn;
 
     @Column(name = "updated_by")
     private String updatedBy;
 
     @Column(name = "updated_on")
-    private Instant updatedOn;
+    private Timestamp updatedOn;
 
     @OneToMany(mappedBy = "collector", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<Library> collector;
     
     @OneToMany(mappedBy = "folder", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<Library> folder;
     
     
@@ -149,16 +154,16 @@ public class Folder implements Serializable {
         this.createdBy = createdBy;
     }
 
-    public Instant getCreatedOn() {
+    public Timestamp getCreatedOn() {
         return createdOn;
     }
 
-    public Folder createdOn(Instant createdOn) {
+    public Folder createdOn(Timestamp createdOn) {
         this.createdOn = createdOn;
         return this;
     }
 
-    public void setCreatedOn(Instant createdOn) {
+    public void setCreatedOn(Timestamp createdOn) {
         this.createdOn = createdOn;
     }
 
@@ -175,19 +180,18 @@ public class Folder implements Serializable {
         this.updatedBy = updatedBy;
     }
 
-    public Instant getUpdatedOn() {
+    public Timestamp getUpdatedOn() {
         return updatedOn;
     }
 
-    public Folder updatedOn(Instant updatedOn) {
+    public Folder updatedOn(Timestamp updatedOn) {
         this.updatedOn = updatedOn;
         return this;
     }
 
-    public void setUpdatedOn(Instant updatedOn) {
+    public void setUpdatedOn(Timestamp updatedOn) {
         this.updatedOn = updatedOn;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {

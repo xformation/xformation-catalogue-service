@@ -1,6 +1,7 @@
 package com.synectiks.process.server.xformation.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -9,15 +10,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.persist.Transactional;
 import com.synectiks.process.server.shared.bindings.GuiceInjectorHolder;
 import com.synectiks.process.server.xformation.domain.Folder;
 import com.synectiks.process.server.xformation.domain.FolderTree;
@@ -34,22 +36,22 @@ public class FolderServiceImpl implements FolderService {
     }
 	
 	@Override
-    public List<Folder> addFolder(String title, Long parentId, String userName) {
+	@Transactional
+    public Folder addFolder(String title, Long parentId) {
         LOG.info("Start service addFolder. Title: "+title+", Parent id: "+parentId);
     	Folder folder = new Folder();
+    	Long maxId = getMax();
+    	folder.setId(maxId+1);
     	folder.setTitle(title);
-    	if(!StringUtils.isBlank(userName)) {
-    		folder.setCreatedBy(userName);
-    		folder.setUpdatedBy(userName);
-    	}else {
-    		folder.setCreatedBy("Admin");
-    		folder.setUpdatedBy("Admin");
-    	}
+		folder.setCreatedBy("Admin");
+		folder.setUpdatedBy("Admin");
+    	
     	Instant now = Instant.now();
-    	folder.setCreatedOn(now);
-    	folder.setUpdatedOn(now);
+    	Timestamp timestamp = Timestamp.from(now);
+    	folder.setCreatedOn(timestamp);
+    	folder.setUpdatedOn(timestamp);
         if(!Objects.isNull(parentId)) {
-        	String query = "select f from Folder f where f.parentId =:parentId ";
+        	String query = "select f from Folder f where f.parentId = :parentId ";
     		Folder f = entityManager.createQuery(query, Folder.class).setParameter("parentId", parentId).getSingleResult();
         	if(f != null) {
         		folder.setParentId(parentId);
@@ -62,10 +64,8 @@ public class FolderServiceImpl implements FolderService {
         	LOG.debug("No parent provided. Its a root folder");
         	entityManager.persist(folder);
         }
-        entityManager.refresh(folder);
-        List<Folder> list = getAllFolders();
         LOG.info("End service addFolder. Title: "+title+", Parent id: "+parentId);
-        return list;
+        return folder;
     }
 
 	@Override
@@ -82,7 +82,7 @@ public class FolderServiceImpl implements FolderService {
         LOG.info("Start service listCollectorOfFolder. Folder title: "+title);
         Folder lf = new Folder();
         lf.setTitle(title);
-        String query = "select f from Folder f where f.title =:title ";
+        String query = "select f from Folder f where f.title = :title ";
 		Folder f = entityManager.createQuery(query, Folder.class).setParameter("title", title).getSingleResult();
     	
         if(f == null) {
@@ -115,7 +115,7 @@ public class FolderServiceImpl implements FolderService {
 					LOG.warn("BeanUtils copyProperties exception. "+e.getMessage());
 				}
 //        		Instant in = f.getUpdatedOn();
-        		datetime = LocalDateTime.ofInstant(f.getUpdatedOn(), ZoneId.systemDefault());
+        		datetime = LocalDateTime.ofInstant(f.getUpdatedOn().toInstant(), ZoneId.systemDefault());
         		String formatedDate = DateTimeFormatter.ofPattern("dd/MM/yyyy").format(datetime);
         		node.setCreatedBy(f.getUpdatedBy());
         		node.setLastModified(formatedDate + " by "+ f.getUpdatedBy());
@@ -156,7 +156,7 @@ public class FolderServiceImpl implements FolderService {
     
     private List<FolderTree> getSubFolderList(Long parentId){
     	
-    	String query = "select f from Folder f where f.parentId =:parentId ";
+    	String query = "select f from Folder f where f.parentId = :parentId ";
     	List<Folder> listF = entityManager.createQuery(query, Folder.class).setParameter("parentId", parentId).getResultList();
 		
     	List<FolderTree> childList = new ArrayList<>();
@@ -168,7 +168,7 @@ public class FolderServiceImpl implements FolderService {
 			} catch (IllegalAccessException | InvocationTargetException e) {
 				LOG.warn("BeanUtils copyProperties exception. "+e.getMessage());
 			}
-    		datetime = LocalDateTime.ofInstant(fl.getUpdatedOn(), ZoneId.systemDefault());
+    		datetime = LocalDateTime.ofInstant(fl.getUpdatedOn().toInstant(), ZoneId.systemDefault());
     		String formatedDate = DateTimeFormatter.ofPattern("dd/MM/yyyy").format(datetime);
     		node.setCreatedBy(fl.getUpdatedBy());
     		node.setLastModified(formatedDate + " by "+ fl.getUpdatedBy());
@@ -176,8 +176,21 @@ public class FolderServiceImpl implements FolderService {
     	}
     	return childList;
     }
-//    
-//    
+    
+    private synchronized Long getMax() {
+		LOG.info("Start service getMax");
+		String query = "select max(f.id) from Folder f ";
+		Long maxId = 0L;
+		LOG.info("Max Id: "+maxId);
+		LOG.info("End service getMax");
+		try {
+			maxId = entityManager.createQuery(query, Long.class).getSingleResult();
+		}catch(Exception e) {
+			LOG.warn("Record may not be found in the folder table. Returning 0 as max id value. "+e.getMessage());
+		}
+		return maxId;
+	}
+    
 //    public List<LibraryTree> getLibraryTree() {
 //        logger.debug("Request to get library tree");
 //        List<Library> libraryList = libraryRepository.findAll(Sort.by(Direction.DESC, "id"));

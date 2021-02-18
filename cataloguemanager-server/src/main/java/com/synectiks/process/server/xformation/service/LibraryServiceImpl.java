@@ -150,7 +150,7 @@ public class LibraryServiceImpl implements LibraryService{
         		folderNode.setName(library.getFolder().getTitle());
         		folderNode.setDescription(library.getFolder().getTitle()+" directory");
         		
-        		datetime = LocalDateTime.ofInstant(library.getFolder().getUpdatedOn(), ZoneId.systemDefault());
+        		datetime = LocalDateTime.ofInstant(library.getFolder().getUpdatedOn().toInstant(), ZoneId.systemDefault());
         		String formatedDate = DateTimeFormatter.ofPattern("dd/MM/yyyy").format(datetime);
         		folderNode.setCreatedBy(library.getFolder().getUpdatedBy());
         		folderNode.setLastModified(formatedDate + " by "+ library.getFolder().getUpdatedBy());
@@ -315,7 +315,7 @@ public class LibraryServiceImpl implements LibraryService{
     		parentNode.setName(parentFolder.getTitle());
     		parentNode.setDescription(parentFolder.getTitle()+" directory");
     		
-    		datetime = LocalDateTime.ofInstant(parentFolder.getUpdatedOn(), ZoneId.systemDefault());
+    		datetime = LocalDateTime.ofInstant(parentFolder.getUpdatedOn().toInstant(), ZoneId.systemDefault());
     		String formatedDate = DateTimeFormatter.ofPattern("dd/MM/yyyy").format(datetime);
     		parentNode.setCreatedBy(parentFolder.getUpdatedBy());
     		parentNode.setLastModified(formatedDate + " by "+ parentFolder.getUpdatedBy());

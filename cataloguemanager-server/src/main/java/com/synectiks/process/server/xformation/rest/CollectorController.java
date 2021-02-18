@@ -46,7 +46,6 @@ public class CollectorController extends RestResource  {
     @ApiOperation("List of all available catalogues/collectors")
     public List<Catalog> getAllCollectors() {
 		LOG.info("Start controller getAllCollectors");
-//		CollectorService cs = GuiceInjectorHolder.getInjector().getInstance(CollectorService.class);
     	List<Catalog> list = this.collectorService.getAllCollectors();
         LOG.info("End controller getAllCollectors");
         return list;
@@ -57,7 +56,6 @@ public class CollectorController extends RestResource  {
     @ApiOperation("Get a catalogue for a given catalogue id")
     public Catalog getCatalogue(@PathParam("id") Long id) {
     	LOG.info("Start controller getCatalogue. Catalogue id: "+id);
-//    	CollectorService cs = GuiceInjectorHolder.getInjector().getInstance(CollectorService.class);
     	Catalog catalog = this.collectorService.getCatalog(id);
     	LOG.info("End controller getCatalogue. Catalogue id: "+id);
     	return catalog;
@@ -81,7 +79,6 @@ public class CollectorController extends RestResource  {
     public List<Catalog> updateCollector(@QueryParam("catalogueId") Long catalogueId, @QueryParam("dataSource") String dataSource) {
 		LOG.info("Start controller updateCollector");
 		LOG.info("Collector id : "+catalogueId+" data source : "+dataSource);
-//    	CollectorService cs = GuiceInjectorHolder.getInjector().getInstance(CollectorService.class);
 		this.collectorService.updateCatalog(catalogueId, dataSource);
     	List<Catalog> list = this.collectorService.getAllCollectors();
     	LOG.info("End controller updateCollector");

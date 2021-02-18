@@ -10,6 +10,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -42,15 +43,13 @@ public class FolderController extends RestResource  {
 	
     @POST
     @ApiOperation("Add a folder")
-    public List<Folder> addFolder(@ApiParam(name = "title") @PathParam("title") @NotBlank String title,
-    		@ApiParam(name = "parentId") @PathParam("parentId") Long parentId,
-    		@ApiParam(name = "userName") @PathParam("userName") String userName) {
+    public List<Folder> addFolder(@ApiParam(name = "title") @QueryParam("title") @NotBlank String title,
+						    		@ApiParam(name = "parentId") @QueryParam("parentId") Long parentId) {
     	LOG.info("Start controller addFolder");
-//    	FolderService fs = GuiceInjectorHolder.getInjector().getInstance(FolderService.class);
-    	List<Folder> fsList = this.folderService.addFolder(title, parentId, userName);
+    	this.folderService.addFolder(title, parentId);
+    	List<Folder> fsList = this.folderService.getAllFolders();
     	LOG.info("End controller addFolder");
     	return fsList;
-//    	return Response.ok().entity(fsList).build();
     }
 
 //    @GetMapping("/listFolder")
@@ -71,7 +70,6 @@ public class FolderController extends RestResource  {
     @ApiOperation("Get complete folders tree")
     public List<FolderTree> getFoldersTree() {
         LOG.info("Start controller getFoldersTree");
-//    	FolderService fs = GuiceInjectorHolder.getInjector().getInstance(FolderService.class);
     	List<FolderTree> fsList = this.folderService.getFoldersTree();
     	LOG.info("End controller getFoldersTree");
         return fsList;
@@ -82,9 +80,8 @@ public class FolderController extends RestResource  {
     @GET
     @Path("/listCollectorOfFolder/{folder}")
     @ApiOperation("Get complete library tree for a given folder")
-    public List<Library> listCollectorOfFolder(@ApiParam(name = "title") @PathParam("title") String title) {
+    public List<Library> listCollectorOfFolder(@ApiParam(name = "title") @QueryParam("title") String title) {
         LOG.info("Start controller listCollectorOfFolder. Folder title: "+title);
-//        FolderService fs = GuiceInjectorHolder.getInjector().getInstance(FolderService.class);
         List<Library> list = this.folderService.listCollectorOfFolder(title);
         LOG.info("End controller listCollectorOfFolder. Folder title: "+title);
         return list;

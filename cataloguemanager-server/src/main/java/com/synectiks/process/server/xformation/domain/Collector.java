@@ -3,7 +3,6 @@ package com.synectiks.process.server.xformation.domain;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -16,6 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "collector")
@@ -54,6 +55,7 @@ public class Collector implements Serializable {
     private Timestamp updatedOn;
 
     @OneToMany(mappedBy = "collector", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<Dashboard> dashboard;
     
     public Long getId() {

@@ -1,7 +1,7 @@
 package com.synectiks.process.server.xformation.domain;
 
 import java.io.Serializable;
-import java.time.Instant;
+import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "dashboard")
@@ -45,16 +47,17 @@ public class Dashboard implements Serializable {
     private String createdBy;
 
     @Column(name = "created_on")
-    private Instant createdOn;
+    private Timestamp createdOn;
 
     @Column(name = "updated_by")
     private String updatedBy;
 
     @Column(name = "updated_on")
-    private Instant updatedOn;
+    private Timestamp updatedOn;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "collector_id")
+    @JsonBackReference
     private Collector collector;
 
     public Long getId() {
@@ -130,16 +133,16 @@ public class Dashboard implements Serializable {
         this.createdBy = createdBy;
     }
 
-    public Instant getCreatedOn() {
+    public Timestamp getCreatedOn() {
         return createdOn;
     }
 
-    public Dashboard createdOn(Instant createdOn) {
+    public Dashboard createdOn(Timestamp createdOn) {
         this.createdOn = createdOn;
         return this;
     }
 
-    public void setCreatedOn(Instant createdOn) {
+    public void setCreatedOn(Timestamp createdOn) {
         this.createdOn = createdOn;
     }
 
@@ -156,16 +159,16 @@ public class Dashboard implements Serializable {
         this.updatedBy = updatedBy;
     }
 
-    public Instant getUpdatedOn() {
+    public Timestamp getUpdatedOn() {
         return updatedOn;
     }
 
-    public Dashboard updatedOn(Instant updatedOn) {
+    public Dashboard updatedOn(Timestamp updatedOn) {
         this.updatedOn = updatedOn;
         return this;
     }
 
-    public void setUpdatedOn(Instant updatedOn) {
+    public void setUpdatedOn(Timestamp updatedOn) {
         this.updatedOn = updatedOn;
     }
 

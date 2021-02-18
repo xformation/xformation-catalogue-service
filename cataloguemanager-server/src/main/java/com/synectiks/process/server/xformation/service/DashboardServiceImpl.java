@@ -1,5 +1,6 @@
 package com.synectiks.process.server.xformation.service;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,35 +34,41 @@ public class DashboardServiceImpl implements DashboardService {
 	@Override
 	public Dashboard getDashboard(Long dashboardId) {
 		LOG.info("Start service getDashboard. Dashboard id: "+dashboardId);
-		String query = "select d from Dashboard d where d.id =: dashboardId";
+		String query = "select d from Dashboard d where d.id = :dashboardId";
 		Dashboard dashboard = entityManager.createQuery(query, Dashboard.class).setParameter("dashboardId", dashboardId).getSingleResult();
 		LOG.info("End service getDashboard. Dashboard id: "+dashboardId);
 		return dashboard;
 	}
 	
 	@Override
+	@Transactional
 	public Dashboard createDashboard(Long collectorId, String dashboardName, String dashboardJson, String dashboardDoc) {
 		
 		LOG.info("Start service createDashboard");
-		String query = "select c from Collector c where c.id =: id";
-		Collector collector = entityManager.createQuery(query, Collector.class).setParameter("id", collectorId).getSingleResult();
+		String query = "select c from Collector c where c.id = :collectorId";
+		Collector collector = entityManager.createQuery(query, Collector.class).setParameter("collectorId", collectorId).getSingleResult();
 		if(collector == null) {
 			LOG.warn("Collector not found. Returning null. Collector Id: "+collectorId);
 			return null;
 		}
+		Long maxId = getMax();
 		Dashboard dashboard = new Dashboard();
+		dashboard.setId(maxId+1);
         dashboard.setCollector(collector);
         dashboard.setName(dashboardName);
         dashboard.setDashboard(dashboardJson.getBytes());
-        dashboard.setDescription(dashboardDoc);
+        if(!StringUtils.isBlank(dashboardDoc)) {
+        	dashboard.setDescription(dashboardDoc);
+        }
+        
 //    	dashboard.setCreatedBy(userContext.getUserId());
 //		dashboard.setUpdatedBy(userContext.getUserId());
     	Instant now = Instant.now();
-    	dashboard.setCreatedOn(now);
-    	dashboard.setUpdatedOn(now);
+    	Timestamp timestamp = Timestamp.from(now);
+    	dashboard.setCreatedOn(timestamp);
+    	dashboard.setUpdatedOn(timestamp);
     	entityManager.persist(dashboard);
     	LOG.debug("Dashboard created in database");
-    	entityManager.refresh(dashboard);
 		LOG.info("End service createDashboard");
 		return dashboard;
 	}
@@ -139,7 +146,7 @@ public class DashboardServiceImpl implements DashboardService {
 	
 	private List<CatalogDetail> getCatalog(Long collectorId) {
 		LOG.info("Start service getCatalog");
-		String query = "select c from Collector c where c.id =: collectorId";
+		String query = "select c from Collector c where c.id = :collectorId";
 		Collector collector = entityManager.createQuery(query, Collector.class).setParameter("collectorId", collectorId).getSingleResult();
 		
 		Catalog catalog = new Catalog();
@@ -149,8 +156,8 @@ public class DashboardServiceImpl implements DashboardService {
 		catalog.setCatalogDescription(collector.getDescription());
 		
 		String queryDs = "SELECT d FROM Collector c JOIN c.dashboard d WHERE c.id = :collectorId";
-		
 		List<Dashboard> dashboardList = entityManager.createQuery(queryDs, Dashboard.class).setParameter("collectorId", collector.getId()).getResultList();
+		
 		List<CatalogDetail> catalogDetailList = new ArrayList<>();
 		for(Dashboard db: dashboardList) {
 			LOG.debug("Dashboard: " + db.toString());
@@ -166,4 +173,12 @@ public class DashboardServiceImpl implements DashboardService {
 		return catalogDetailList;
 	}
 	
+	private synchronized Long getMax() {
+		LOG.info("Start service getMax");
+		String query = "select max(c.id) from Dashboard c ";
+		Long maxId = entityManager.createQuery(query, Long.class).getSingleResult();
+		LOG.info("Max Id: "+maxId);
+		LOG.info("End service getMax");
+		return maxId;
+	}
 }

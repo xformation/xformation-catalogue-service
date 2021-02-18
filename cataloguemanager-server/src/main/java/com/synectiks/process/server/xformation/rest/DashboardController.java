@@ -7,12 +7,14 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotBlank;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -47,28 +49,21 @@ public class DashboardController extends RestResource  {
     @GET
     @Path("/{id}")
     @ApiOperation("Get a dashboard for a given dashboard id")
-    public Dashboard getDashboard(@ApiParam(name = "id") @PathParam("id") @NotBlank Long id) {
+    public Dashboard getDashboard(@PathParam("id") Long id) {
     	LOG.info("Start controller getDashboard");
-//    	DashboardService ds = GuiceInjectorHolder.getInjector().getInstance(DashboardService.class);
     	Dashboard dashboard = this.dashboardService.getDashboard(id);
     	LOG.info("End controller getAlert. Alert id: "+id);
     	return dashboard;
-//    	final URI streamUri = getUriBuilderToSelf().path(DashboardController.class)
-//                .path("{id}")
-//                .build(id);
-
-//    	return Response.created().entity(dashboard).build();
     }
     
     @POST
     @Path("/addToCollector")
     @ApiOperation("Add a dashboard to a catalogue/collector")
-    public Dashboard addToCollector( @ApiParam(name = "collectorId") @PathParam("collectorId") @NotBlank Long collectorId,
-    								@ApiParam(name = "dashboardName") @PathParam("dashboardName") @NotBlank String dashboardName,
-    								@ApiParam(name = "dashboardJson") @PathParam("dashboardJson") @NotBlank String dashboardJson,
-    								@ApiParam(name = "dashboardDoc") @PathParam("dashboardDoc") String dashboardDoc) {
+    public Dashboard addToCollector( @QueryParam("collectorId") Long collectorId,
+						    		 @QueryParam("dashboardName") String dashboardName,
+						    		 @QueryParam("dashboardJson") String dashboardJson,
+						    		 @DefaultValue("") @QueryParam("dashboardDoc") String dashboardDoc) {
     	LOG.info("Start controller addToCollector");
-//    	DashboardService ds = GuiceInjectorHolder.getInjector().getInstance(DashboardService.class);
     	Dashboard dashboard = this.dashboardService.createDashboard(collectorId, dashboardName, dashboardJson, dashboardDoc);
     	if(dashboard == null) {
     		LOG.error("Dashaboard cannot be added to collector. Collector id not found. Collector id: "+collectorId);
@@ -76,13 +71,12 @@ public class DashboardController extends RestResource  {
     	}
     	LOG.info("End controller addToCollector");
     	return dashboard;
-//        return Response.ok().entity(dashboard).build();
     }
 
     @DELETE
     @Path("/{id}")
     @ApiOperation("Delete a dashboard")
-    public void deleteDashboard(@ApiParam(name = "id") @PathParam("id") @NotBlank Long id) {
+    public void deleteDashboard(@PathParam("id") Long id) {
     	LOG.info("Start controller deleteDashboard. Dashboard id: "+id);
 //    	DashboardService ds = GuiceInjectorHolder.getInjector().getInstance(DashboardService.class);
     	this.dashboardService.deleteDashboard(id);
@@ -92,22 +86,21 @@ public class DashboardController extends RestResource  {
     @GET
     @Path("/listDashboardOfCollector/{collectorId}")
     @ApiOperation("Get all the dashboards belongs to a collector")
-    public List<Dashboard> listDashboardOfCollector(@ApiParam(name = "collectorId") @PathParam("collectorId") @NotBlank Long collectorId) {
+    public Response listDashboardOfCollector(@PathParam("collectorId") Long collectorId) {
     	LOG.info("Start controller listDashboardOfCollector. Collector id: "+collectorId);
 //    	DashboardService ds = GuiceInjectorHolder.getInjector().getInstance(DashboardService.class);
     	List<Dashboard> list = this.dashboardService.listDashboardOfCollector(collectorId);
     	LOG.info("End controller listDashboardOfCollector. Collector id: "+collectorId);
     	
-    	return list;
-//    			Response.ok().entity(list).build();
+//    	return list;
+    	return Response.ok().entity(list).build();
     }
 
     @GET
     @Path("/listDashboard")
     @ApiOperation("Get all the dashboards")
-    public List<CatalogDetail> listAllDashboard(
-    		@ApiParam(name = "collectorId") @PathParam("collectorId") Long collectorId,
-    		@ApiParam(name = "isFolder") @PathParam("isFolder") String isFolder) {
+    public List<CatalogDetail> listAllDashboard(@QueryParam("collectorId") Long collectorId,
+    											@QueryParam("isFolder") String isFolder) {
     	LOG.info("Start controller listAllDashboard");
 //    	DashboardService ds = GuiceInjectorHolder.getInjector().getInstance(DashboardService.class);
     	List<CatalogDetail> catList = this.dashboardService.listAllDashboard(collectorId, isFolder);

@@ -186,7 +186,7 @@ public class LibraryServiceImpl implements LibraryService{
     			cd.setTitle(d.getName());
     			cd.setDescription(d.getDescription());
     			cd.setDashboardJson(new String(d.getDashboard()));
-    			datetime = LocalDateTime.ofInstant(d.getUpdatedOn(), ZoneId.systemDefault());
+    			datetime = LocalDateTime.ofInstant(d.getUpdatedOn().toInstant(), ZoneId.systemDefault());
         		formatedDate = DateTimeFormatter.ofPattern("dd/MM/yyyy").format(datetime);
         		cd.setCreatedBy(d.getUpdatedBy());
         		cd.setLastModified(formatedDate + " by "+ d.getUpdatedBy());

@@ -78,7 +78,7 @@ public class FolderController extends RestResource  {
 //
 //    @GetMapping("/listCollectorOfFolder/{folder}")
     @GET
-    @Path("/listCollectorOfFolder/{folder}")
+    @Path("/listCollectorOfFolder")
     @ApiOperation("Get complete library tree for a given folder")
     public List<Library> listCollectorOfFolder(@ApiParam(name = "title") @QueryParam("title") String title) {
         LOG.info("Start controller listCollectorOfFolder. Folder title: "+title);

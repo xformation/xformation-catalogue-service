@@ -234,6 +234,28 @@ public class LibraryServiceImpl implements LibraryService{
         return finalList;
     }
     
+	private synchronized Long getMax() {
+		LOG.info("Start service getMax");
+		String query = "select l from Library l ";
+		Long maxId = 0L;
+		try {
+			List<Library> list = entityManager.createQuery(query, Library.class).getResultList();
+			if(list == null || (list != null && list.size() == 0)) {
+				LOG.info("No record found in table. Returning 0 as max id");
+				return maxId;
+			}else {
+//				maxId = new Long(list.size());
+				LOG.info("Record found. Getting max id");
+				maxId = entityManager.createQuery("select max(l.id) from Library l", Long.class).getSingleResult();
+			}
+		}catch(Exception e) {
+			LOG.warn("Record may not be found in the library table. Returning 0 as max id value. "+e.getMessage());
+		}
+		LOG.info("Max Id: "+maxId);
+		LOG.info("End service getMax");
+		return maxId;
+	}
+	
 //    public List<FolderTree> getFoldersTree() {
 //    	List<FolderTree> parentList = new ArrayList<>();
 //        logger.debug("Getting folder tree");

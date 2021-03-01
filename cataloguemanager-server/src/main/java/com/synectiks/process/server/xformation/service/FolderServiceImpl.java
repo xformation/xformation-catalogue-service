@@ -50,17 +50,17 @@ public class FolderServiceImpl implements FolderService {
     	folder.setCreatedOn(timestamp);
     	folder.setUpdatedOn(timestamp);
         if(!Objects.isNull(parentId)) {
-        	String query = "select f from Folder f where f.parentId = :parentId ";
-    		Folder f = entityManager.createQuery(query, Folder.class).setParameter("parentId", parentId).getSingleResult();
-        	if(f != null) {
+        	String query = "select f from Folder f where f.id = :parentId ";
+    		List<Folder> f = entityManager.createQuery(query, Folder.class).setParameter("parentId", parentId).getResultList();
+        	if(f != null && f.size() > 0) {
         		folder.setParentId(parentId);
         		entityManager.persist(folder);
-        		LOG.debug("Folder created: ", folder);
+        		LOG.info("Folder created: ", folder);
         	}else {
         		LOG.warn("Invalid parent id. Cannot save folder");
         	}
         }else {
-        	LOG.debug("No parent provided. Its a root folder");
+        	LOG.info("No parent provided. Its a root folder");
         	entityManager.persist(folder);
         }
         LOG.info("End service addFolder. Title: "+title+", Parent id: "+parentId);
@@ -195,19 +195,6 @@ public class FolderServiceImpl implements FolderService {
 		}
 		LOG.info("Max Id: "+maxId);
 		LOG.info("End service getMax");
-		return maxId;
-	}
-    
-    private synchronized Long getMaxWithNativeQuery() {
-		LOG.info("Start service getMaxWithNativeQuery");
-		String query = "select coalesce(max(id), 0) from folder";
-		Long maxId = 0L;
-		try {
-			maxId  = (Long)entityManager.createNativeQuery(query).getSingleResult();
-			LOG.info("Max Id: "+maxId);
-		}catch(Exception e) {
-			LOG.warn("Record may not be found in the folder table. Returning 0 as max id value. "+e.getMessage());
-		}
 		return maxId;
 	}
     

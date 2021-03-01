@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -179,12 +178,33 @@ public class FolderServiceImpl implements FolderService {
     
     private synchronized Long getMax() {
 		LOG.info("Start service getMax");
-		String query = "select max(f.id) from Folder f ";
+		String query = "select f from Folder f ";
 		Long maxId = 0L;
+		try {
+			List<Folder> list = entityManager.createQuery(query, Folder.class).getResultList();
+			if(list == null || (list != null && list.size() == 0)) {
+				LOG.info("No record found in table. Returning 0 as max id");
+				return maxId;
+			}else {
+//				maxId = new Long(list.size());
+				LOG.info("Record found. Getting max id");
+				maxId = entityManager.createQuery("select max(f.id) from Folder f", Long.class).getSingleResult();
+			}
+		}catch(Exception e) {
+			LOG.warn("Record may not be found in the folder table. Returning 0 as max id value. "+e.getMessage());
+		}
 		LOG.info("Max Id: "+maxId);
 		LOG.info("End service getMax");
+		return maxId;
+	}
+    
+    private synchronized Long getMaxWithNativeQuery() {
+		LOG.info("Start service getMaxWithNativeQuery");
+		String query = "select coalesce(max(id), 0) from folder";
+		Long maxId = 0L;
 		try {
-			maxId = entityManager.createQuery(query, Long.class).getSingleResult();
+			maxId  = (Long)entityManager.createNativeQuery(query).getSingleResult();
+			LOG.info("Max Id: "+maxId);
 		}catch(Exception e) {
 			LOG.warn("Record may not be found in the folder table. Returning 0 as max id value. "+e.getMessage());
 		}

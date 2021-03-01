@@ -58,6 +58,11 @@ public class Collector implements Serializable {
     @JsonManagedReference
     private List<Dashboard> dashboard;
     
+    @OneToMany(mappedBy = "collector", fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<Library> collector;
+    
+    
     public Long getId() {
         return id;
     }
@@ -207,6 +212,14 @@ public class Collector implements Serializable {
 
 	public void setDashboard(List<Dashboard> dashboard) {
 		this.dashboard = dashboard;
+	}
+
+	public List<Library> getCollector() {
+		return collector;
+	}
+
+	public void setCollector(List<Library> collector) {
+		this.collector = collector;
 	}
 
 //	public Set<Dashboard> getDashboards() {

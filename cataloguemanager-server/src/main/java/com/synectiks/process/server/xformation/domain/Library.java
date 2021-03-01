@@ -26,8 +26,8 @@ public class Library implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_gen")
+    @SequenceGenerator(sequenceName = "sequence_generator", allocationSize = 1, name = "seq_gen" )
     private Long id;
 
     @Column(name = "app_name")

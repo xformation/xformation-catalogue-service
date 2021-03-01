@@ -28,8 +28,8 @@ public class Folder implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_gen")
+    @SequenceGenerator(sequenceName = "sequence_generator", allocationSize = 1, name = "seq_gen" )
     private Long id;
 
     @Column(name = "title")
@@ -59,10 +59,6 @@ public class Folder implements Serializable {
     @Column(name = "updated_on")
     private Timestamp updatedOn;
 
-    @OneToMany(mappedBy = "collector", fetch = FetchType.EAGER)
-    @JsonManagedReference
-    private List<Library> collector;
-    
     @OneToMany(mappedBy = "folder", fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<Library> folder;
@@ -225,4 +221,12 @@ public class Folder implements Serializable {
             ", updatedOn='" + getUpdatedOn() + "'" +
             "}";
     }
+
+	public List<Library> getFolder() {
+		return folder;
+	}
+
+	public void setFolder(List<Library> folder) {
+		this.folder = folder;
+	}
 }

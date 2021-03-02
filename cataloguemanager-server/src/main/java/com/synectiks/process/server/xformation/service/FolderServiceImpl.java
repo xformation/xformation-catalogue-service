@@ -109,7 +109,7 @@ public class FolderServiceImpl implements FolderService {
         	node.setHasChild(hasChild);
         	if(Objects.isNull(f.getParentId())) {
         		try {
-					BeanUtils.copyProperties(f, node);
+					BeanUtils.copyProperties(node, f);
 				} catch (IllegalAccessException | InvocationTargetException e) {
 					LOG.warn("BeanUtils copyProperties exception. "+e.getMessage());
 				}
@@ -122,6 +122,7 @@ public class FolderServiceImpl implements FolderService {
         	}
         }
         getTree(parentList);
+        LOG.info("End service getFoldersTree");
         return parentList;
     }
     
@@ -146,15 +147,17 @@ public class FolderServiceImpl implements FolderService {
     }
     
     private boolean hasChildren(Folder parent) {
+    	LOG.info("Start service hasChildren");
 		List<FolderTree> list = getSubFolderList(parent.getId());
 		if(list.size() > 0) {
 			return true;
 		}
+		LOG.info("End service hasChildren");
         return false;
     }
     
     private List<FolderTree> getSubFolderList(Long parentId){
-    	
+    	LOG.info("Start service getSubFolderList");
     	String query = "select f from Folder f where f.parentId = :parentId ";
     	List<Folder> listF = entityManager.createQuery(query, Folder.class).setParameter("parentId", parentId).getResultList();
 		
@@ -163,7 +166,7 @@ public class FolderServiceImpl implements FolderService {
     	for(Folder fl: listF) {
     		FolderTree node = new FolderTree();
     		try {
-				BeanUtils.copyProperties(fl, node);
+				BeanUtils.copyProperties(node, fl);
 			} catch (IllegalAccessException | InvocationTargetException e) {
 				LOG.warn("BeanUtils copyProperties exception. "+e.getMessage());
 			}
@@ -171,8 +174,10 @@ public class FolderServiceImpl implements FolderService {
     		String formatedDate = DateTimeFormatter.ofPattern("dd/MM/yyyy").format(datetime);
     		node.setCreatedBy(fl.getUpdatedBy());
     		node.setLastModified(formatedDate + " by "+ fl.getUpdatedBy());
+    		LOG.info("Folder tree node : {} ",node);
     		childList.add(node);
     	}
+    	LOG.info("End service getSubFolderList");
     	return childList;
     }
     

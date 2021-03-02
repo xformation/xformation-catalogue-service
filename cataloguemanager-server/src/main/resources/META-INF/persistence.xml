@@ -8,7 +8,7 @@
              	<class>com.synectiks.process.server.xformation.domain.Collector</class>
              	<class>com.synectiks.process.server.xformation.domain.Dashboard</class>
              	<class>com.synectiks.process.server.xformation.domain.Folder</class>
-             	<class>com.synectiks.process.server.xformation.domain.Library</class>
+             	<class>com.synectiks.process.server.xformation.domain.Library</class> 
              	<properties>
              		<!-- 
              		<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />

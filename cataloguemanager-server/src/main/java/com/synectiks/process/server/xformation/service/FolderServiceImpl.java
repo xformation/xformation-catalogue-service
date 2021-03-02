@@ -133,7 +133,7 @@ public class FolderServiceImpl implements FolderService {
     			for(FolderTree cft: subList) {
     				Folder f = new Folder();
     				try {
-						BeanUtils.copyProperties(cft, f);
+						BeanUtils.copyProperties(f, cft);
 					} catch (IllegalAccessException | InvocationTargetException e) {
 						LOG.warn("BeanUtils copyProperties exception. "+e.getMessage());
 					}
